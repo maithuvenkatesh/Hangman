@@ -1,54 +1,74 @@
 import random
 
-LIVES = 8
-turnsLeft = 0
-usedLetters = []
-wordList = []
+class Game:
+	INCORRECT = 0
+	CORRECT = 1
+	LETTER_USED = 2
+	WIN = 3
 
-def generateWord():
+	def __init__(self, word):
+		self.word = word
+		self.turns = 8
+		self.used_letters = []
+		self.progress = ['_' for w in self.word]
+		self.won = False
+
+	def check_letter(self, letter):
+		if letter in self.used_letters:
+			return self.LETTER_USED
+		else:
+			if letter in self.word:
+				# Replace letter
+				for i, l in enumerate(self.word):
+					if(l == letter):
+						self.progress[i] = letter
+
+				# Check for win
+				if ''.join(self.progress) == self.word:
+					self.win = True
+					return self.WIN
+
+				return self.CORRECT
+			else:
+				self.turns -= 1
+				return self.INCORRECT
+
+	def __str__(self):
+		progress_string = 'Word: ' + ' '.join(self.progress) + '\n'
+		turns_string = 'Number of turns left: ' + str(self.turns) + '\n'
+		output_string = progress_string + turns_string
+		return output_string
+
+def generate_word():
 	words = ['hello', 'summer', 'colours', 'batman']
 	return random.choice(words)
 
-def checkLetter(word, letter):
-	global turnsLeft
-	global usedLetters
-
-	if letter in usedLetters:
-		print("You have already used that letter.")
-		print(usedLetters)
-	else:
-		if letter in word:
-			printWord(word, wordList, letter)
-			return "Good guess."
-		else:
-			turnsLeft = turnsLeft + 1
-			return "Sorry. Try again."
-
-def printWord(word, wordList, letter):
-	for i, l in enumerate(word):
-		if(l == letter):
-			wordList[i] = letter
-
-	for w in wordList:
-		print(w, " ", end="")
-
 
 def main():
-	word = generateWord()
+	game = Game(generate_word())
 
-	for w in word:
-		wordList.append("_")
-		print("_ ", end="")
-	print("")
-	print("No of lives: ", LIVES)
+	print game
 
-	turn = 0
-	while(turnsLeft <= LIVES):
-		letter = input("Please enter your guess: ")
-		print(checkLetter(word, letter))
-		print("No of turn left: ", (LIVES - turnsLeft))
-		print("")
+	while game.turns > 0:
+		letter = raw_input('Please enter your guess: ')
+		result = game.check_letter(letter)
 
+		if result is game.INCORRECT:
+			print 'Sorry. Try again.'
 
-if __name__ == "__main__":
+		elif result is game.CORRECT:
+			print 'Good guess.'
+
+		elif result is game.WIN:
+			print 'Congratulations. You win...at life!'
+
+		elif result is game.LETTER_USED:
+			print 'You have already used that letter.'
+			print game.used_letters
+
+		print game
+
+	print "No more turns left. You have lost."
+
+if __name__ == '__main__':
 	main()
