@@ -1,4 +1,5 @@
 import random
+from ascii_art import hangman_pics
 
 class Game:
 	INCORRECT = 0
@@ -8,7 +9,7 @@ class Game:
 
 	def __init__(self, word):
 		self.word = word
-		self.turns = 8
+		self.turns = 7
 		self.used_letters = []
 		self.progress = ['_' for w in self.word]
 		self.won = False
@@ -35,8 +36,9 @@ class Game:
 
 	def __str__(self):
 		progress_string = 'Word: ' + ' '.join(self.progress) + '\n'
+		image = hangman_pics[8 - self.turns]
 		turns_string = 'Number of turns left: ' + str(self.turns) + '\n'
-		output_string = progress_string + turns_string
+		output_string = progress_string + turns_string + image + '\n'
 		return output_string
 
 def generate_word():
@@ -68,7 +70,7 @@ def main():
 
 		print game
 
-	print "No more turns left. You have lost."
+	print 'No more turns left. You have lost.'
 
 if __name__ == '__main__':
 	main()
